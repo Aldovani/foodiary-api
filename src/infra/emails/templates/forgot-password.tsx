@@ -1,14 +1,6 @@
-import { Body } from "@react-email/body";
-import { Column } from "@react-email/column";
-import { Head } from "@react-email/head";
-import { Heading } from "@react-email/heading";
-import { Html } from "@react-email/html";
-import { Row } from "@react-email/row";
-import { Section } from "@react-email/section";
-import { Text } from "@react-email/text";
+import { Body, Column, Head, Heading, Html, Row, Section, Text, } from "@react-email/components";
 import React from "react";
 import { TailwindConfig } from "../components/tailwind-config";
-
 
 interface IForgotPasswordProps {
   confirmationCode: string;
