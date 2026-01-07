@@ -1,5 +1,5 @@
-import { ErrorCode } from "../error-code";
-import { HttpError } from "./http-error";
+import { ErrorCode } from '../error-code';
+import { HttpError } from './http-error';
 
 export class BadRequest extends HttpError {
   public override statusCode: number;
@@ -11,7 +11,7 @@ export class BadRequest extends HttpError {
     this.statusCode = 400;
 
     this.code = code ?? ErrorCode.BAD_REQUEST;
-    this.message = message ?? "Bad request";
-    this.name = "BadRequestError";
+    this.message = message ?? 'Bad request';
+    this.name = 'BadRequestError';
   }
 }

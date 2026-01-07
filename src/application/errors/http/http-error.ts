@@ -1,4 +1,4 @@
-import { ErrorCode } from "../error-code";
+import { ErrorCode } from '../error-code';
 
 export abstract class HttpError extends Error {
   public abstract statusCode: number;

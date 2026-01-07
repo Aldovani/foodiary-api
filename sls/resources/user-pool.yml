@@ -1,0 +1,58 @@
+ Resources:
+    UserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: ${self:custom.cognito.PoolName}
+        DeletionProtection: ACTIVE
+        MfaConfiguration: OFF
+        AutoVerifiedAttributes:
+          - email
+        AdminCreateUserConfig:
+          AllowAdminCreateUserOnly: false
+        UsernameAttributes:
+          - email
+        AccountRecoverySetting:
+          RecoveryMechanisms:
+            - Name: verified_email
+              Priority: 1
+        Schema:
+          - Name: internalId
+            AttributeDataType: String
+            Required: false
+            Mutable: false
+        Polices:
+          PasswordPolicy:
+            MinimumLength: 8
+            RequireUppercase: false
+            RequireLowercase: false
+            RequireNumbers: false
+            RequireSymbols: false
+        LambdaConfig:
+          PreTokenGeneration:
+            LambdaVersion: V2_0
+            LambdaArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${self:service}-${self:provider.stage}-preTokenGenerationTrigger
+
+    PreTokenGenerationLambdaPermission:
+      Type: AWS::Lambda::Permission
+      DependsOn: PreTokenGenerationTriggerLambdaFunction
+      Properties:
+        Action: lambda:InvokeFunction
+        FunctionName: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${self:service}-${self:provider.stage}-preTokenGenerationTrigger
+        Principal: cognito-idp.amazonaws.com
+        SourceArn: !GetAtt UserPool.Arn
+
+
+    UserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: ${self:service}-${self:provider.stage}-UserPool-Client
+        UserPoolId: !Ref UserPool
+        GeneratedSecret: true
+        ExplicitAuthFlows:
+          - ALLOW_USER_PASSWORD_AUTH
+        TokenValidityUnits:
+          AccessToken: hours
+        AccessTokenValidity: 12
+        RefreshTokenRotation:
+          Feature: ENABLED
+          RetryGracePeriodSeconds: 0
