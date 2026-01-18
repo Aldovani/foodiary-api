@@ -3,7 +3,7 @@ import { AccountItem } from './account-item';
 import {  } from './profile-item';
 
 export class GoalItem {
-  private readonly type = 'Goal';
+  static readonly type = 'Goal';
 
   private readonly keys: GoalItem.keys;
 
@@ -19,7 +19,7 @@ export class GoalItem {
     return {
       ...this.keys,
       ...this.attrs,
-      type: this.type,
+      type: GoalItem.type,
     };
   }
 
