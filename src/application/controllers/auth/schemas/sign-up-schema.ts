@@ -14,6 +14,7 @@ export const signUpSchema = z.object({
     gender: z.enum(Profile.Gender),
     height: z.number().positive('"height" must be a positive number'),
     weight: z.number().positive('"weight" must be a positive number'),
+    goal: z.enum(Profile.Goal),
     activityLevel: z.enum(['sedentary', 'light', 'moderate', 'active', 'very_active'], {
       error: () => ({ message: '"activityLevel" is required and must be one of: "sedentary", "light", "moderate", "active", or "very_active"' }),
     }),

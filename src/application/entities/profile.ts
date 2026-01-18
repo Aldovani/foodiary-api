@@ -7,6 +7,7 @@ export class Profile {
   gender: Profile.Gender;
   height: number;
   weight: number;
+  goal: Profile.Goal;
   activityLevel: Profile.ActivityLevel;
   readonly createdAt: Date;
 
@@ -17,6 +18,7 @@ export class Profile {
     this.gender = props.gender;
     this.height = props.height;
     this.weight = props.weight;
+    this.goal = props.goal;
     this.activityLevel = props.activityLevel;
     this.createdAt = props.createdAt ?? new Date();
   }
@@ -30,6 +32,7 @@ export namespace Profile {
     gender: Gender
     height: number;
     weight: number;
+    goal: Goal;
     activityLevel: ActivityLevel;
     createdAt?: Date;
   };
@@ -37,6 +40,12 @@ export namespace Profile {
   export enum Gender {
     MALE = 'MALE',
     FEMALE = 'FEMALE',
+  }
+
+  export enum Goal{
+    LOSE= 'LOSE',
+    MAINTAIN= 'MAINTAIN',
+    GAIN= 'GAIN',
   }
 
   export enum ActivityLevel {
