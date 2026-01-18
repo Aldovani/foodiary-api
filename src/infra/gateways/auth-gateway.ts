@@ -1,6 +1,6 @@
 import { InvalidCredentials } from '@application/errors/application/invalid-credentials';
 import { InvalidRefreshToken } from '@application/errors/application/invalid-refresh-token';
-import { ConfirmForgotPasswordCommand, ForgotPasswordCommand, GetTokensFromRefreshTokenCommand, InitiateAuthCommand, SignUpCommand } from '@aws-sdk/client-cognito-identity-provider';
+import { AdminDeleteUserCommand, ConfirmForgotPasswordCommand, ForgotPasswordCommand, GetTokensFromRefreshTokenCommand, InitiateAuthCommand, SignUpCommand } from '@aws-sdk/client-cognito-identity-provider';
 import { cognitoClient } from '@infra/clients/cognito-client';
 import { Injectable } from '@kernel/decorators/injectable';
 import { AppConfig } from '@shared/config/app-config';
@@ -108,12 +108,22 @@ export class AuthGateway {
 
   async confirmForgotPassword({ email, confirmationCode, password }: AuthGateway.ConfirmForgotPasswordParams): Promise<void> {
 
-  const command= new ConfirmForgotPasswordCommand({
+    const command = new ConfirmForgotPasswordCommand({
       ClientId: this.appConfig.auth.cognito.client.id,
       ConfirmationCode: confirmationCode,
       Password: password,
       Username: email,
       SecretHash: this.getSecretHash(email),
+    });
+
+    await cognitoClient.send(command);
+  }
+
+  async deleteUser({ externalId }: AuthGateway.DeleteUserParams): Promise<void> {
+
+    const command = new AdminDeleteUserCommand({
+      UserPoolId: this.appConfig.auth.cognito.pool.id,
+      Username: externalId,
     });
 
     await cognitoClient.send(command);
@@ -151,6 +161,10 @@ export namespace AuthGateway {
 
   export type RefreshTokenParams = {
     refreshToken: string;
+  }
+
+  export type DeleteUserParams = {
+    externalId: string;
   }
 
   export type RefreshTokenResult = {

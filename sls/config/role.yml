@@ -1,8 +1,11 @@
 statements:
-      - Effect: "Allow"
-        Action:
-          - "dynamodb:PutItem"
-          - "dynamodb:Query"
-        Resource:
-          - !GetAtt MainTable.Arn
-          - !Sub "${MainTable.Arn}/index/*"
+  - Effect: "Allow"
+    Action:
+      - "dynamodb:PutItem"
+      - "dynamodb:Query"
+    Resource:
+      - !GetAtt MainTable.Arn
+      - !Sub "${MainTable.Arn}/index/*"
+  - Effect: "Allow"
+    Action: cognito-idp:AdminDeleteUser
+    Resource: !GetAtt UserPool.Arn
