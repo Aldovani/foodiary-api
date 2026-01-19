@@ -5,9 +5,9 @@ import { env } from './env';
 export class AppConfig {
   readonly auth: AppConfig.Auth;
   readonly db: AppConfig.Database;
+  readonly storage: AppConfig.Storage;
 
   constructor() {
-
     this.auth = {
       cognito: {
         client: {
@@ -25,6 +25,10 @@ export class AppConfig {
         mainTableName: env.MAIN_TABLE_NAME,
       },
     };
+
+    this.storage = {
+      mealsBucket: env.MEALS_BUCKET,
+    };
   }
 }
 
@@ -39,7 +43,10 @@ export namespace AppConfig {
         id: string;
       };
     };
+  };
 
+  export type Storage = {
+    mealsBucket: string;
   };
 
   export type Database = {
