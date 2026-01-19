@@ -62,7 +62,7 @@ export class MealItem {
     const month = String(createdAt.getMonth() + 1).padStart(2, '0');
     const day = String(createdAt.getDate()).padStart(2, '0');
 
-    return `Meals#${accountId}-${year}-${month}-${day}`;
+    return `MEALS#${accountId}#${year}-${month}-${day}`;
   }
 
   static getGSI1SK(accountId: string): MealItem.keys['GSI1SK'] {
@@ -74,7 +74,7 @@ export namespace MealItem {
   export type keys = {
     PK: `Meal#${string}`;
     SK: `Meal#${string}`;
-    GSI1PK: `Meals#${string}-${string}-${string}-${string}`;
+    GSI1PK: `MEALS#${string}#${string}-${string}-${string}`;
     GSI1SK: `Meal#${string}`;
   };
 
@@ -95,6 +95,7 @@ export namespace MealItem {
     Atributes & {
       type: 'Meal';
     };
+
   export type GSI1PKParams = {
     accountId: string;
     createdAt: Date;
