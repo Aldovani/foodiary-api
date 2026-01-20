@@ -6,6 +6,7 @@ export class AppConfig {
   readonly auth: AppConfig.Auth;
   readonly db: AppConfig.Database;
   readonly storage: AppConfig.Storage;
+  readonly cdn: AppConfig.CDN;
 
   constructor() {
     this.auth = {
@@ -28,6 +29,10 @@ export class AppConfig {
 
     this.storage = {
       mealsBucket: env.MEALS_BUCKET,
+    };
+    
+    this.cdn = {
+      mealCDN: env.MEALS_CDN_DOMAIN_NAME,
     };
   }
 }
@@ -53,5 +58,9 @@ export namespace AppConfig {
     dynamoDB: {
       mainTableName: string;
     };
+  };
+
+  export type CDN = {
+    mealCDN: string;
   };
 }
