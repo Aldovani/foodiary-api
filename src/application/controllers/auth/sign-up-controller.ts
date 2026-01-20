@@ -6,7 +6,10 @@ import { SignUpSchema, signUpSchema } from './schemas/sign-up-schema';
 
 @Injectable()
 @Schema(signUpSchema)
-export class SignUpController extends Controller<'public', SignUpController.Response> {
+export class SignUpController extends Controller<
+  'public',
+  SignUpController.Response
+> {
   constructor(private readonly signUpUseCase: SignUpUseCase) {
     super();
   }
@@ -18,17 +21,26 @@ export class SignUpController extends Controller<'public', SignUpController.Resp
   > {
     const { account } = body;
 
-    const { accessToken, refreshToken } = await this.signUpUseCase.execute(
+    const { accessToken, refreshToken } = await this.signUpUseCase.execute({
       account,
-    );
+      profile: {
+        name: body.profile.name,
+        birthdate: body.profile.birthDate,
+        gender: body.profile.gender,
+        height: body.profile.height,
+        weight: body.profile.weight,
+        goal: body.profile.goal,
+        activityLevel: body.profile.activityLevel,
+    },
+    });
 
     return {
-      statusCode: 201,
-      body: {
-        accessToken,
-        refreshToken,
-      },
-    };
+  statusCode: 201,
+  body: {
+    accessToken,
+    refreshToken,
+  },
+};
   }
 }
 

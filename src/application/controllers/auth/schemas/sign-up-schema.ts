@@ -7,7 +7,7 @@ export const signUpSchema = z.object({
     password: z.string().min(8, '"password" must be at least 8 characters long'),
   }),
   profile: z.object({
-    Name: z.string().min(1, '"Name" is required'),
+    name: z.string().min(1, '"Name" is required'),
     birthDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
       message: '"birthDate" must be a valid date string',
     }).transform((date) => new Date(date)),
@@ -15,7 +15,7 @@ export const signUpSchema = z.object({
     height: z.number().positive('"height" must be a positive number'),
     weight: z.number().positive('"weight" must be a positive number'),
     goal: z.enum(Profile.Goal),
-    activityLevel: z.enum(['sedentary', 'light', 'moderate', 'active', 'very_active'], {
+    activityLevel: z.enum(Profile.ActivityLevel, {
       error: () => ({ message: '"activityLevel" is required and must be one of: "sedentary", "light", "moderate", "active", or "very_active"' }),
     }),
   }),
