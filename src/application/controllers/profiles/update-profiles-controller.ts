@@ -5,7 +5,7 @@ import { Schema } from '@kernel/decorators/schema';
 import {
   UpdateProfileSchema,
   updateProfileSchema,
-} from './schema/update-profile-schema';
+} from './schemas/update-profile-schema';
 
 @Injectable()
 @Schema(updateProfileSchema)
