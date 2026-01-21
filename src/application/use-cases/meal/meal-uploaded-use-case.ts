@@ -2,57 +2,49 @@ import { Meal } from '@application/entities/meal';
 import { ResourceNotFound } from '@application/errors/application/resource-not-found';
 import { MealRepository } from '@infra/database/dynamo/repositories/meal-repository';
 import { MealsFileStorageGateway } from '@infra/gateways/meals-file-storage-gateway';
+import { MealsQueueGateway } from '@infra/gateways/meals-queue-gateway';
 import { Injectable } from '@kernel/decorators/injectable';
 
 @Injectable()
-export class GetMealByIdUseCase {
+export class MealUploadedUseCase {
   constructor(
     private readonly mealRepository: MealRepository,
     private readonly mealsFileStorageGateway: MealsFileStorageGateway,
+    private readonly mealsQueueGateway: MealsQueueGateway,
   ) { }
 
   public async execute({
-    accountId,
-    mealId,
-  }: GetMealUseCase.Input): Promise<GetMealUseCase.Output> {
+    fileKey,
+  }: MealUploadedUseCase.Input): Promise<MealUploadedUseCase.Output> {
+    const { mealId, accountId } =
+      await this.mealsFileStorageGateway.getFileMetadata({
+        fileKey,
+      });
+
     const meal = await this.mealRepository.findById({
-      mealId,
       accountId,
+      mealId,
     });
 
     if (!meal) {
       throw new ResourceNotFound('Meal not found');
     }
 
-    const inputFileUrl = this.mealsFileStorageGateway.getFileUrl(meal.inputFileKey);
+    meal.status = Meal.Status.QUEUED;
 
-    return {
-      createdAt: meal.createdAt,
-      icon: meal.icon,
-      id: meal.id,
-      inputFileUrl,
-      inputType: meal.inputType,
-      name: meal.name,
-      foods: meal.foods,
-      status: meal.status,
-    };
+    await this.mealRepository.save(meal);
+
+    await this.mealsQueueGateway.publish({
+      mealId: meal.id,
+      accountId: meal.accountId,
+    });
   }
 }
 
-export namespace GetMealUseCase {
+export namespace MealUploadedUseCase {
   export type Input = {
-    accountId: string;
-    mealId: string;
+    fileKey: string;
   };
 
-  export type Output = {
-    id: string;
-    status: Meal.Status;
-    inputType: Meal.InputType;
-    inputFileUrl: string;
-    name: string;
-    icon: string;
-    foods: Meal.Food[];
-    createdAt: Date;
-  };
+  export type Output = void;
 }

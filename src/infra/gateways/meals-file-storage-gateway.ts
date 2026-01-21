@@ -1,4 +1,5 @@
 import { Meal } from '@application/entities/meal';
+import { HeadObjectCommand } from '@aws-sdk/client-s3';
 import { createPresignedPost } from '@aws-sdk/s3-presigned-post';
 import { s3Client } from '@infra/clients/s3-client';
 import { Injectable } from '@kernel/decorators/injectable';
@@ -24,12 +25,13 @@ export class MealsFileStorageGateway {
   }
 
   getFileUrl(fileKey: string): string {
-   return `https://${this.appConfig.cdn.mealCDN}/${fileKey}`;
+    return `https://${this.appConfig.cdn.mealCDN}/${fileKey}`;
   }
 
   async createPOST({
     file,
     mealId,
+    accountId,
   }: MealsFileStorageGateway.CreatePOSTParams): Promise<MealsFileStorageGateway.CreatePOSTResult> {
     const bucket = this.appConfig.storage.mealsBucket;
     const contentType =
@@ -47,6 +49,7 @@ export class MealsFileStorageGateway {
       ],
       Fields: {
         'x-amz-meta-mealid': mealId,
+        'x-amz-meta-accountId': accountId,
       },
     });
 
@@ -62,6 +65,25 @@ export class MealsFileStorageGateway {
 
     return { uploadSignature };
   }
+
+  async getFileMetadata({
+    fileKey,
+  }: MealsFileStorageGateway.GetFileMetadataParams): Promise<MealsFileStorageGateway.GetFileMetadataResult> {
+    const command = new HeadObjectCommand({
+      Bucket: this.appConfig.storage.mealsBucket,
+      Key: fileKey,
+    });
+    const { Metadata = {} } = await s3Client.send(command);
+
+    if (!Metadata.mealid || !Metadata.accountid) {
+      throw new Error(`[getFileMetadata] Cannot process file "${fileKey}"`);
+    }
+
+    return {
+      mealId: Metadata.accountid,
+      accountId: Metadata.accountid,
+    };
+  }
 }
 
 export namespace MealsFileStorageGateway {
@@ -72,6 +94,7 @@ export namespace MealsFileStorageGateway {
 
   export type CreatePOSTParams = {
     mealId: string;
+    accountId: string;
     file: {
       key: string;
       size: number;
@@ -81,5 +104,13 @@ export namespace MealsFileStorageGateway {
 
   export type CreatePOSTResult = {
     uploadSignature: string;
+  };
+  export type GetFileMetadataParams = {
+    fileKey: string;
+  };
+
+  export type GetFileMetadataResult = {
+    mealId: string;
+    accountId: string;
   };
 }

@@ -6,15 +6,15 @@ export class Meal {
 
   status: Meal.Status;
   attempts: number;
-
-  inputType: Meal.InputType;
-
-  inputFileKey: string;
   name: string;
   icon: string;
   foods: Meal.Food[];
 
-  createdAt: Date;
+  readonly inputType: Meal.InputType;
+
+  readonly inputFileKey: string;
+
+  readonly createdAt: Date;
 
   constructor(props: Meal.Attributes) {
     this.id = props.id ?? KSUID.randomSync().string;
