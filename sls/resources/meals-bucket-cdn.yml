@@ -26,17 +26,19 @@ Resources:
       DistributionConfig:
         Enabled: true
         HttpVersion: http2and3
-        Aliases: !if
+        Aliases: !If
           - ShouldSetupMealsCDNCustomDomain
           -
             - ${env:MEALS_CDN_DOMAIN_NAME,""}
           - !Ref "AWS::NoValue"
-        ViewerCertificate: !if
+        ViewerCertificate: !If
           - ShouldSetupMealsCDNCustomDomain
-          - MinimumProtocolVersion: TLSv1.2_2021
+          -
+            MinimumProtocolVersion: TLSv1.2_2021
             SslSupportMethod: sni-only
             AcmCertificateArn: !Sub "${env:MEALS_CDN_CERTIFICATE_ARN,'}"
-          - CloudFrontDefaultCertificate: false
+          -
+            CloudFrontDefaultCertificate: false
 
         Origins:
           DomainName: !GetAtt MealsBucket.RegionalDomainName

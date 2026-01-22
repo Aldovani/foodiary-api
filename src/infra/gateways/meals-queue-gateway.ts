@@ -7,7 +7,7 @@ import { AppConfig } from '@shared/config/app-config';
 export class MealsQueueGateway {
   constructor(private readonly config: AppConfig) { }
 
-  async publish(message: MealsFileStorageGateway.Message): Promise<void> {
+  async publish(message: MealsQueueGateway.Message): Promise<void> {
     const command = new SendMessageCommand( {
       QueueUrl: this.config.queues.mealsQueueUrl,
       MessageBody: JSON.stringify(message),
@@ -17,7 +17,7 @@ export class MealsQueueGateway {
   }
 }
 
-export namespace MealsFileStorageGateway {
+export namespace MealsQueueGateway {
   export type Message = {
     mealId: string;
     accountId: string;
