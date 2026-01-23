@@ -1,22 +1,14 @@
 import { IQueueConsumer } from '@application/contracts/IQueue-consumer';
-import { ResourceNotFound } from '@application/errors/application/resource-not-found';
-import { MealRepository } from '@infra/database/dynamo/repositories/meal-repository';
+import { ProcessMealUseCase } from '@application/use-cases/meal/process-meal-use-case';
 import { MealsQueueGateway } from '@infra/gateways/meals-queue-gateway';
 
 export class MealsQueueConsumer implements IQueueConsumer<MealsQueueGateway.Message> {
-  constructor(private readonly mealsRepository: MealRepository) {}
+  constructor(private readonly processMealUseCase: ProcessMealUseCase) { }
 
   async process({
     accountId,
     mealId,
   }: MealsQueueGateway.Message): Promise<void> {
-    const meal = await this.mealsRepository.findById({
-      mealId,
-      accountId,
-    });
-
-    if (!meal) {
-      throw new ResourceNotFound('Meal not found');
-    }
+    await this.processMealUseCase.execute({ accountId, mealId });
   }
 }

@@ -35,9 +35,11 @@
     "@react-email/components": "^1.0.4",
     "@types/node": "^25.0.3",
     "ksuid": "^3.0.0",
+    "openai": "^6.16.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "reflect-metadata": "^0.2.2",
+    "ts-dedent": "^2.2.0",
     "zod": "^4.3.4"
   }
 }

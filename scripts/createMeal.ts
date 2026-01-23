@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { promises as fs } from 'fs';
+import { promises as fs } from 'node:fs';
 import path from 'path';
 
 const API_URL = 'https://api.foodiary.com.br/meals';
@@ -76,14 +76,14 @@ function buildFormData(
   for (const [key, value] of Object.entries(fields)) {
     form.append(key, value);
   }
-  const blob = new Blob([fileData], { type: fileType });
+  const blob = new Blob([fileData as any], { type: fileType });
   form.append('file', blob, filename);
   return form;
 }
 
 async function uploadToS3(url: string, form: FormData): Promise<void> {
   console.log(`📤 Uploading to S3 at ${url}`);
-  s;
+
   const res = await fetch(url, {
     method: 'POST',
     body: form,
